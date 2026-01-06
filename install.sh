@@ -4,6 +4,12 @@
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+# Install tmux and jq if not present
+if ! command -v tmux &> /dev/null || ! command -v jq &> /dev/null; then
+  echo "Installing tmux and jq..."
+  sudo apt-get update && sudo apt-get install -y tmux jq
+fi
+
 # Remove any existing claude-dotfiles block, then add fresh
 if grep -q ">>> claude-dotfiles >>>" "$HOME/.bashrc" 2>/dev/null; then
   # Create temp file without the claude-dotfiles block
