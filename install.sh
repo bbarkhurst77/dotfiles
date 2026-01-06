@@ -18,7 +18,8 @@ if grep -q ">>> claude-dotfiles >>>" "$HOME/.bashrc" 2>/dev/null; then
   echo "Removed old Claude Code functions"
 fi
 
-# Append fresh functions
+# Append fresh functions (ensure newline before appending)
+echo "" >> "$HOME/.bashrc"
 cat "$SCRIPT_DIR/.claude_functions" >> "$HOME/.bashrc"
 echo "Installed Claude Code functions"
 
@@ -51,6 +52,12 @@ if [ -f "$HOME/.claude/settings.json" ]; then
 else
   cp "$SCRIPT_DIR/.claude/settings.json" "$HOME/.claude/"
   echo "Installed Claude Code settings"
+fi
+
+# Install tmux config
+if [ -f "$SCRIPT_DIR/.tmux.conf" ]; then
+  cp "$SCRIPT_DIR/.tmux.conf" "$HOME/.tmux.conf"
+  echo "Installed tmux config"
 fi
 
 # Install Claude Code CLI if not present
