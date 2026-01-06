@@ -4,15 +4,22 @@
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Add claude functions to bashrc if not already present
-if ! grep -q "clauded()" "$HOME/.bashrc" 2>/dev/null; then
-  echo "" >> "$HOME/.bashrc"
-  echo "# Claude Code helpers (from dotfiles)" >> "$HOME/.bashrc"
-  cat "$SCRIPT_DIR/.claude_functions" >> "$HOME/.bashrc"
-  echo "Added Claude Code functions to .bashrc"
-else
-  echo "Claude Code functions already in .bashrc"
+# Remove old claude functions block if present, then add fresh ones
+if grep -q ">>> claude-dotfiles >>>" "$HOME/.bashrc" 2>/dev/null; then
+  sed -i '/>>> claude-dotfiles >>>/,/<<< claude-dotfiles <<</d' "$HOME/.bashrc"
+  echo "Removed old Claude Code functions"
+elif grep -q "clauded()" "$HOME/.bashrc" 2>/dev/null; then
+  # Legacy: remove old-style functions without markers
+  sed -i '/# Claude Code helpers/,/^# <<< claude-dotfiles <<</d' "$HOME/.bashrc" 2>/dev/null
+  # Also try removing just the function definitions
+  sed -i '/^clauded()/,/^}/d' "$HOME/.bashrc" 2>/dev/null
+  sed -i '/^resumed()/,/^}/d' "$HOME/.bashrc" 2>/dev/null
+  sed -i '/^resumedf()/,/^}/d' "$HOME/.bashrc" 2>/dev/null
+  echo "Removed legacy Claude Code functions"
 fi
+echo "" >> "$HOME/.bashrc"
+cat "$SCRIPT_DIR/.claude_functions" >> "$HOME/.bashrc"
+echo "Installed Claude Code functions"
 
 # Set up Claude Code config directory
 mkdir -p "$HOME/.claude"

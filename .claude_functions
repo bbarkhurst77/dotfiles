@@ -1,5 +1,5 @@
+# >>> claude-dotfiles >>>
 # Claude Code helpers for Codespaces
-# Source this file or add to .bashrc
 
 clauded() {
   local repo=$(basename "$(git rev-parse --show-toplevel 2>/dev/null)" 2>/dev/null || echo "no-repo")
@@ -50,3 +50,4 @@ resumedf() {
     tmux new-session -s "$session_name" \; send-keys "$cmd" Enter
   fi
 }
+# <<< claude-dotfiles <<<
