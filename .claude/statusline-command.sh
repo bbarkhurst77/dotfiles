@@ -67,7 +67,9 @@ BAR_WIDTH=10
 FILLED=$((PERCENT * BAR_WIDTH / 100))
 [ "$FILLED" -gt "$BAR_WIDTH" ] && FILLED=$BAR_WIDTH
 EMPTY=$((BAR_WIDTH - FILLED))
-BAR=$(printf '█%.0s' $(seq 1 $FILLED 2>/dev/null))$(printf '░%.0s' $(seq 1 $EMPTY 2>/dev/null))
+BAR=""
+for ((i=0; i<FILLED; i++)); do BAR+="█"; done
+for ((i=0; i<EMPTY; i++)); do BAR+="░"; done
 [ -z "$BAR" ] && BAR="░░░░░░░░░░"
 
 # Lines changed (from cost object)
