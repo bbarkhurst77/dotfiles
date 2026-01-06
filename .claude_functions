@@ -17,7 +17,7 @@ clauded() {
     read -p "  Purpose: " session_purpose
     [[ -z "$session_purpose" ]] && session_purpose="General session"
     local escaped_purpose="${session_purpose//\"/\\\"}"
-    claude --dangerously-skip-permissions --append-system-prompt "Session purpose: ${escaped_purpose}"
+    claude --dangerously-skip-permissions --model opus --append-system-prompt "Session purpose: ${escaped_purpose}"
   else
     # Create tmux session with welcome message and tips
     tmux new-session -s "$session_name" \; send-keys "clear && echo '
@@ -38,13 +38,13 @@ clauded() {
   • tmux choose-session - Interactive session selector
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-' && read -p '  Purpose: ' purpose && claude --dangerously-skip-permissions --append-system-prompt \"Session purpose: \${purpose:-General session}\"" Enter
+' && read -p '  Purpose: ' purpose && claude --dangerously-skip-permissions --model opus --append-system-prompt \"Session purpose: \${purpose:-General session}\"" Enter
   fi
 }
 
 resumed() {
   local search="${1:-}"
-  local cmd="claude --dangerously-skip-permissions --resume"
+  local cmd="claude --dangerously-skip-permissions --model opus --resume"
   [[ -n "$search" ]] && cmd="$cmd $search"
 
   if [[ -n "$TMUX" ]]; then
@@ -57,7 +57,7 @@ resumed() {
 
 resumedf() {
   local search="${1:-}"
-  local cmd="claude --dangerously-skip-permissions --resume --fork-session"
+  local cmd="claude --dangerously-skip-permissions --model opus --resume --fork-session"
   [[ -n "$search" ]] && cmd="$cmd $search"
 
   if [[ -n "$TMUX" ]]; then
