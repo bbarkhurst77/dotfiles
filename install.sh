@@ -18,6 +18,10 @@ if grep -q ">>> claude-dotfiles >>>" "$HOME/.bashrc" 2>/dev/null; then
   echo "Removed old Claude Code functions"
 fi
 
+# Remove any stray clauded/resumed aliases (from old configs)
+sed -i '/^alias clauded=/d' "$HOME/.bashrc"
+sed -i '/^alias resumed=/d' "$HOME/.bashrc"
+
 # Append fresh functions (ensure newline before appending)
 echo "" >> "$HOME/.bashrc"
 cat "$SCRIPT_DIR/.claude_functions" >> "$HOME/.bashrc"
