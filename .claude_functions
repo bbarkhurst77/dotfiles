@@ -1,0 +1,52 @@
+# Claude Code helpers for Codespaces
+# Source this file or add to .bashrc
+
+clauded() {
+  local repo=$(basename "$(git rev-parse --show-toplevel 2>/dev/null)" 2>/dev/null || echo "no-repo")
+  local branch=$(git branch --show-current 2>/dev/null || echo "no-branch")
+  local datetime=$(date +%Y%m%d-%H%M)
+  local session_name="cc-${repo}-${branch}-${datetime}"
+
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo "  NEW CLAUDE SESSION"
+  echo "  Repo: $repo | Branch: $branch"
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo ""
+  read -p "  Purpose: " session_purpose
+  [[ -z "$session_purpose" ]] && session_purpose="General session"
+
+  local escaped_purpose="${session_purpose//\"/\\\"}"
+  local cmd="claude --dangerously-skip-permissions --append-system-prompt \"Session purpose: ${escaped_purpose}\""
+
+  if [[ -n "$TMUX" ]]; then
+    eval "$cmd"
+  else
+    tmux new-session -s "$session_name" \; send-keys "$cmd" Enter
+  fi
+}
+
+resumed() {
+  local search="${1:-}"
+  local cmd="claude --dangerously-skip-permissions --resume"
+  [[ -n "$search" ]] && cmd="$cmd $search"
+
+  if [[ -n "$TMUX" ]]; then
+    eval "$cmd"
+  else
+    local session_name="cc-resume-$(date +%Y%m%d-%H%M)"
+    tmux new-session -s "$session_name" \; send-keys "$cmd" Enter
+  fi
+}
+
+resumedf() {
+  local search="${1:-}"
+  local cmd="claude --dangerously-skip-permissions --resume --fork-session"
+  [[ -n "$search" ]] && cmd="$cmd $search"
+
+  if [[ -n "$TMUX" ]]; then
+    eval "$cmd"
+  else
+    local session_name="cc-fork-$(date +%Y%m%d-%H%M)"
+    tmux new-session -s "$session_name" \; send-keys "$cmd" Enter
+  fi
+}
