@@ -1,5 +1,10 @@
 {
   "terminal.integrated.defaultProfile.linux": "bash",
   "terminal.integrated.defaultLocation": "editor",
-  "workbench.panel.defaultLocation": "right"
+  "workbench.panel.defaultLocation": "right",
+  "markdown.preview.openMarkdownLinks": "inPreview",
+  "workbench.editor.enablePreview": true,
+  "workbench.sideBar.location": "left",
+  "workbench.activityBar.location": "top",
+  "explorer.compactFolders": true
 }
