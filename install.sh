@@ -59,4 +59,11 @@ if ! command -v claude &> /dev/null; then
   npm install -g @anthropic-ai/claude-code
 fi
 
+# VS Code settings (terminal on right, no bottom panel)
+if [ -f "$SCRIPT_DIR/.vscode/settings.json" ]; then
+  mkdir -p "$HOME/.vscode-remote/data/Machine"
+  cp "$SCRIPT_DIR/.vscode/settings.json" "$HOME/.vscode-remote/data/Machine/settings.json"
+  echo "Installed VS Code settings"
+fi
+
 echo "Dotfiles setup complete!"
