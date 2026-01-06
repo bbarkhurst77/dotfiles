@@ -4,20 +4,15 @@
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Remove old claude functions block if present, then add fresh ones
+# Remove any existing claude-dotfiles block, then add fresh
 if grep -q ">>> claude-dotfiles >>>" "$HOME/.bashrc" 2>/dev/null; then
-  sed -i '/>>> claude-dotfiles >>>/,/<<< claude-dotfiles <<</d' "$HOME/.bashrc"
+  # Create temp file without the claude-dotfiles block
+  awk '/>>> claude-dotfiles >>>/{skip=1} /<<< claude-dotfiles <<</{skip=0; next} !skip' "$HOME/.bashrc" > "$HOME/.bashrc.tmp"
+  mv "$HOME/.bashrc.tmp" "$HOME/.bashrc"
   echo "Removed old Claude Code functions"
-elif grep -q "clauded()" "$HOME/.bashrc" 2>/dev/null; then
-  # Legacy: remove old-style functions without markers
-  sed -i '/# Claude Code helpers/,/^# <<< claude-dotfiles <<</d' "$HOME/.bashrc" 2>/dev/null
-  # Also try removing just the function definitions
-  sed -i '/^clauded()/,/^}/d' "$HOME/.bashrc" 2>/dev/null
-  sed -i '/^resumed()/,/^}/d' "$HOME/.bashrc" 2>/dev/null
-  sed -i '/^resumedf()/,/^}/d' "$HOME/.bashrc" 2>/dev/null
-  echo "Removed legacy Claude Code functions"
 fi
-echo "" >> "$HOME/.bashrc"
+
+# Append fresh functions
 cat "$SCRIPT_DIR/.claude_functions" >> "$HOME/.bashrc"
 echo "Installed Claude Code functions"
 
@@ -33,15 +28,10 @@ fi
 
 # Merge or create settings.json
 if [ -f "$HOME/.claude/settings.json" ]; then
-  # Merge statusLine into existing settings using jq
   if command -v jq &> /dev/null; then
-    DOTFILE_SETTINGS="$SCRIPT_DIR/.claude/settings.json"
-    TMP_SETTINGS=$(mktemp)
-    jq -s '.[0] * .[1]' "$HOME/.claude/settings.json" "$DOTFILE_SETTINGS" > "$TMP_SETTINGS"
-    mv "$TMP_SETTINGS" "$HOME/.claude/settings.json"
+    jq -s '.[0] * .[1]' "$HOME/.claude/settings.json" "$SCRIPT_DIR/.claude/settings.json" > "$HOME/.claude/settings.tmp"
+    mv "$HOME/.claude/settings.tmp" "$HOME/.claude/settings.json"
     echo "Merged status bar config into existing settings"
-  else
-    echo "Warning: jq not installed, skipping settings merge"
   fi
 else
   cp "$SCRIPT_DIR/.claude/settings.json" "$HOME/.claude/"
