@@ -19,11 +19,20 @@ echo "Installed Claude Code functions"
 # Set up Claude Code config directory
 mkdir -p "$HOME/.claude"
 
-# Copy statusline script
-if [ -f "$SCRIPT_DIR/.claude/statusline-command.sh" ]; then
-  cp "$SCRIPT_DIR/.claude/statusline-command.sh" "$HOME/.claude/"
-  chmod +x "$HOME/.claude/statusline-command.sh"
-  echo "Installed custom status bar"
+# Copy scripts
+for script in statusline-command.sh chime-on-stop.sh get-session-id.sh; do
+  if [ -f "$SCRIPT_DIR/.claude/$script" ]; then
+    cp "$SCRIPT_DIR/.claude/$script" "$HOME/.claude/"
+    chmod +x "$HOME/.claude/$script"
+  fi
+done
+echo "Installed Claude scripts"
+
+# Copy slash commands
+if [ -d "$SCRIPT_DIR/.claude/commands" ]; then
+  mkdir -p "$HOME/.claude/commands"
+  cp -r "$SCRIPT_DIR/.claude/commands/"* "$HOME/.claude/commands/"
+  echo "Installed slash commands (chimeon, chimeoff)"
 fi
 
 # Merge or create settings.json
